@@ -7,10 +7,8 @@ public interface IGOAPAction
 {
     string ActionName { get; }
     float Cost { get; }
-    Dictionary<string, bool> Preconditions { get; }
-    Dictionary<string, bool> Effects { get; }
-    bool ArePreconditionsMet(Dictionary<string, bool> worldState);
-    void Execute(FarmerGOAP farmer);
+    float GetCost(FarmerGOAP farmer);
+    Task Execute(FarmerGOAP farmer);
 }
 
 // Interface for NPC needs
@@ -19,9 +17,9 @@ public interface IGOAPNeeds
     bool IsHungry { get; }
     bool IsTired { get; }
     bool IsUnmotivated { get; }
-    void Eat();
-    void Sleep();
-    void Rest();
+    Task Eat();
+    Task Sleep();
+    Task Rest();
 }
 
 // Interface for movement and navigation
@@ -49,30 +47,20 @@ public interface IGOAPFarmTasks
     Task WaterCrop();
     Task HarvestCrop();
 }
-// Actions
 
 // Actions
 public class PlantAction : IGOAPAction
 {
     public string ActionName => "Plant Seeds";
     public float Cost => 2f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "HasSeeds", true }, { "PlotEmpty", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "CropPlanted", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public async Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    public async void Execute(FarmerGOAP farmer) {
         await farmer.PlantCrop();
-        farmer.worldState["PlotEmpty"] = false;   // Mark plot as occupied
-        farmer.worldState["CropPlanted"] = true;  // A crop now exists
+    }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.HasSeeds ? Cost : 0f;
     }
 }
 
@@ -80,22 +68,14 @@ public class WaterAction : IGOAPAction
 {
     public string ActionName => "Water Crops";
     public float Cost => 1f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "CropPlanted", true }, { "NeedsWater", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "CropsWatered", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public async Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    public async void Execute(FarmerGOAP farmer) {
         await farmer.WaterCrop();
-        farmer.worldState["needsWater"] = false;
+    }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.HasWater ? Cost : 0f;
     }
 }
 
@@ -103,21 +83,14 @@ public class HarvestAction : IGOAPAction
 {
     public string ActionName => "Harvest Crops";
     public float Cost => 3f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "CropPlanted", true }, { "CropsWatered", true }, { "ReadyToHarvest", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "HarvestComplete", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public async Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    public async void Execute(FarmerGOAP farmer) {
         await farmer.HarvestCrop();
+    }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.CurrentFarmPlot.GetComponent<FarmPlot>().ReadyToHarvest ? Cost : 0f;
     }
 }
 
@@ -125,58 +98,46 @@ public class EatFoodAction : IGOAPAction
 {
     public string ActionName => "Eat Food";
     public float Cost => 1f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "HasFood", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "NotHungry", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
+        farmer.Eat();
+        return Task.CompletedTask;
     }
-    public void Execute(FarmerGOAP farmer) { farmer.Eat(); }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.HasFood && farmer.IsHungry ? Cost : 0f;
+    }
 }
 
 public class SleepAction : IGOAPAction
 {
     public string ActionName => "Sleep";
     public float Cost => 3f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "HasBed", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "NotTired", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
+        farmer.Sleep();
+        return Task.CompletedTask;
     }
-    public void Execute(FarmerGOAP farmer) { farmer.Sleep(); }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.IsTired ? Cost : 0f;
+    }
 }
 
 public class RestAction : IGOAPAction
 {
     public string ActionName => "Rest";
     public float Cost => 2f;
-    public Dictionary<string, bool> Preconditions { get; } = new Dictionary<string, bool> { { "HasRestArea", true } };
-    public Dictionary<string, bool> Effects { get; } = new Dictionary<string, bool> { { "Motivated", true } };
-    public bool ArePreconditionsMet(Dictionary<string, bool> worldState)
+    public Task Execute(FarmerGOAP farmer)
     {
-        foreach (var precondition in Preconditions)
-        {
-            if (!worldState.ContainsKey(precondition.Key) || worldState[precondition.Key] != precondition.Value)
-            {
-                return false;
-            }
-        }
-        return true;
+        farmer.Rest();
+        return Task.CompletedTask;
     }
-    public void Execute(FarmerGOAP farmer) { farmer.Rest(); }
+
+    public float GetCost(FarmerGOAP farmer)
+    {
+        return farmer.IsUnmotivated ? Cost : 0f;
+    }
 }
