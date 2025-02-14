@@ -6,7 +6,6 @@ public class FoodSource : MonoBehaviour, IInteractable
     public Transform Transform => transform;
     private FarmManager FarmManager => FarmManager.Instance;
     public int availableFood => FarmManager.totalFood;
-    public int maxFood => FarmManager.maxFood;
     public FarmerGOAP Assignee { get => null; set => value = null; }
     public float PriorityScore(FarmerGOAP farmer)
     {
@@ -20,6 +19,7 @@ public class FoodSource : MonoBehaviour, IInteractable
             FarmManager.Instance.totalFood--;
             farmer.Eat();
             farmer.GetComponent<FarmerNeeds>().Eat();
+            FarmManager.Instance.UpdateUI();
             Debug.Log($"{farmer.name} ate food at {gameObject.name}");
         }
     }

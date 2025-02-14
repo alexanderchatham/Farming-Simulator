@@ -10,11 +10,11 @@ public class Dropoff : MonoBehaviour, IInteractable
         if(farmer.food >= 5)
             return 110f; // High priority if hungry
         if (farmer.food > 2)
-            return 40f;
+            return 3f;
         if (farmer.food > 1)
-            return 20f;
+            return 2f;
         if (farmer.food == 1)
-            return 10f;
+            return 1f;
         return 0f;
     }
 

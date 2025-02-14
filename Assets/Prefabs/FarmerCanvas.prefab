@@ -993,7 +993,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04ff301e5065abc4c97065bfdb3f9041, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offset: 100
+  offset: 50
   farmer: {fileID: 0}
   waterSlider: {fileID: 7032801922085915223}
   seedSlider: {fileID: 6480131317176094823}

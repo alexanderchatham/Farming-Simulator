@@ -21,7 +21,6 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
     public Transform FoodSource;
     public GameObject[] Plants;
 
-    public List<IGOAPAction> availableActions = new List<IGOAPAction>();
     private Dictionary<string, bool> worldState => FarmManager.Instance.worldState;
     private NavMeshAgent agent; 
     public List<IInteractable> interactables = new List<IInteractable>(); // List of all interactables
@@ -43,7 +42,7 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
 
     public async Task Eat() { CurrentState = FarmerState.Eating; await Task.Delay(3000); }
     public async Task Sleep() { needs.fatigue = 100f; CurrentState = FarmerState.Sleeping; await Task.Delay(8000); }
-    public async Task Rest() { needs.motivation = 100f; CurrentState = FarmerState.Resting; }
+    public async Task Rest() { needs.motivation = 100f; CurrentState = FarmerState.Resting; await Task.Delay(5000); }
 
     // Navigation
     public async Task MoveTo(Vector3 position)

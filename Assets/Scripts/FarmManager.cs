@@ -1,4 +1,6 @@
+using JetBrains.Annotations;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class FarmManager : MonoBehaviour
@@ -9,13 +11,15 @@ public class FarmManager : MonoBehaviour
     public int PlotLength = 3;
     public int PlotWidth = 3;
     public int totalFood = 3;
-    public int maxFood = 10;
     public int totalGold = 0;
     public List<FarmPlot> farmPlots = new List<FarmPlot>();
     public Dictionary<string, bool> worldState = new Dictionary<string, bool>();
     public GameObject farmerPrefab;
     public GameObject farmPlotPrefab;
-
+    public Transform farmerParent;
+    public Transform plotParent;
+    public TextMeshProUGUI foodText;
+    public TextMeshProUGUI goldText;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -36,23 +40,20 @@ public class FarmManager : MonoBehaviour
         {
             for (int j = 0; j < PlotWidth; j++)
             {
-                Instantiate(farmPlotPrefab, new Vector3(i * 2, 0, j * 2), Quaternion.identity);
+                Instantiate(farmPlotPrefab, new Vector3(i * 2, 0, j * 2), Quaternion.identity,plotParent);
             }
         }
         for (int i = 0; i < amountOfWorkers; i++)
         {
             SpawnFarmer();
         }
+        UpdateUI();
     }
 
     private void SpawnFarmer()
     {
-        var farmer = Instantiate(farmerPrefab, new Vector3(Random.Range(-5,5), 0, Random.Range(-5, 5)), Quaternion.identity);
+        var farmer = Instantiate(farmerPrefab, new Vector3(Random.Range(-5,5), 0, Random.Range(-5, 5)), Quaternion.identity,farmerParent);
         farmer.GetComponent<FarmerGOAP>().Initialize();
-    }
-    public void CollectFood(int amount)
-    {
-        totalFood += amount;
     }
     public void SellFood()
     {
@@ -61,19 +62,18 @@ public class FarmManager : MonoBehaviour
             totalFood--;
             totalGold += 10;
         }
+        UpdateUI();
     }
 
-    internal void AddFood(int food)
+    public void AddFood(int food)
     {
         totalFood += food;
-        if (totalFood > maxFood)
-        {
-            var extra = totalFood - maxFood;
-            for (int i = 0; i < extra; i++)
-            {
-                totalGold += 10;
-            }
-            totalFood = maxFood;
-        }
+        UpdateUI();
+    }
+
+    public void UpdateUI()
+    {
+        foodText.text = "Food: " + totalFood;
+        goldText.text = "Gold: " + totalGold;
     }
 }
