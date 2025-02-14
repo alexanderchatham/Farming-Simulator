@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +12,14 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
 {
     public enum FarmerState { Idle, Moving, Planting, Watering, Harvesting, Eating, Sleeping, Resting }
     public FarmerState CurrentState { get; private set; } = FarmerState.Idle;
+
     public GameObject FarmerUI;
     private FarmerNeeds needs => GetComponent<FarmerNeeds>();
     public Transform CurrentFarmPlot { get; set; } // Tracks the current farm plot
     public Transform SeedStorage;
     public Transform WaterSource;
     public Transform FoodSource;
+    public GameObject[] Plants;
 
     public List<IGOAPAction> availableActions = new List<IGOAPAction>();
     private Dictionary<string, bool> worldState => FarmManager.Instance.worldState;
@@ -61,7 +64,15 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
     public bool HasFood => food>0;
     public void CollectSeeds() { seeds = maxSeeds;}
     public void CollectWater() { water = maxWater;}
-    public void CollectFood() { food++; }
+    public void CollectFood() { food++; if(food<=5)transform.GetChild(food - 1).gameObject.SetActive(true); }
+
+    public void DepositFood()
+    {
+        FarmManager.Instance.AddFood(food); food = 0; foreach (Transform item in transform)
+        {
+            item.gameObject.SetActive(false);
+        }
+    }
 
     // Farming Tasks
     public async Task PlantCrop() {CurrentState = FarmerState.Planting; Debug.Log("Planting Crop"); CurrentFarmPlot.tag = "Planted"; CurrentFarmPlot.GetComponent<FarmPlot>().Plant(this); CurrentState = FarmerState.Idle; }

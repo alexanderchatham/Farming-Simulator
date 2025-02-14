@@ -8,6 +8,9 @@ public class FarmManager : MonoBehaviour
     public int amountOfWorkers = 5;
     public int PlotLength = 3;
     public int PlotWidth = 3;
+    public int totalFood = 3;
+    public int maxFood = 10;
+    public int totalGold = 0;
     public List<FarmPlot> farmPlots = new List<FarmPlot>();
     public Dictionary<string, bool> worldState = new Dictionary<string, bool>();
     public GameObject farmerPrefab;
@@ -46,5 +49,31 @@ public class FarmManager : MonoBehaviour
     {
         var farmer = Instantiate(farmerPrefab, new Vector3(Random.Range(-5,5), 0, Random.Range(-5, 5)), Quaternion.identity);
         farmer.GetComponent<FarmerGOAP>().Initialize();
+    }
+    public void CollectFood(int amount)
+    {
+        totalFood += amount;
+    }
+    public void SellFood()
+    {
+        if (totalFood > 0)
+        {
+            totalFood--;
+            totalGold += 10;
+        }
+    }
+
+    internal void AddFood(int food)
+    {
+        totalFood += food;
+        if (totalFood > maxFood)
+        {
+            var extra = totalFood - maxFood;
+            for (int i = 0; i < extra; i++)
+            {
+                totalGold += 10;
+            }
+            totalFood = maxFood;
+        }
     }
 }
