@@ -17,6 +17,7 @@ public class OnClickHelper : MonoBehaviour
     public triggerType type;
     public float holdTime;
     private bool timerRunning;
+
     private void OnMouseDown()
     {
         if(type == triggerType.OnDown)
@@ -43,6 +44,7 @@ public class OnClickHelper : MonoBehaviour
     {
         mouseEnterEvent.Invoke();   
     }
+
     private void startTimer()
     {
         StartCoroutine(RunTimer());
