@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 673578166641049016}
   - component: {fileID: 74889152284151719}
   - component: {fileID: 4259662744363111602}
+  - component: {fileID: 4560093581333966823}
   m_Layer: 0
   m_Name: Farmer
   m_TagString: Untagged
@@ -288,16 +289,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 339d687d1135147b7b98736d021908a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FarmerUI: {fileID: 6498707162957150330, guid: b25c022a417587740bb68da57eef3d81, type: 3}
-  SeedStorage: {fileID: 0}
-  WaterSource: {fileID: 0}
-  FoodSource: {fileID: 0}
+  FarmerUIPrefab: {fileID: 6498707162957150330, guid: b25c022a417587740bb68da57eef3d81, type: 3}
+  farmerUI: {fileID: 0}
   seeds: 0
   water: 0
   food: 0
-  maxFood: 5
-  maxSeeds: 5
-  maxWater: 5
 --- !u!114 &4259662744363111602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,6 +312,53 @@ MonoBehaviour:
   hungerDecay: 0.5
   fatigueDecay: 0.3
   motivationDecay: 0.2
+--- !u!114 &4560093581333966823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3225298007803413336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e364ddd4e1b4ac090df16845ad061d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unityEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  mouseEnterEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 74889152284151719}
+        m_TargetAssemblyTypeName: FarmerGOAP, Assembly-CSharp
+        m_MethodName: ShowUI
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  mouseExitEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 74889152284151719}
+        m_TargetAssemblyTypeName: FarmerGOAP, Assembly-CSharp
+        m_MethodName: ShowUI
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  type: 0
+  holdTime: 0
 --- !u!1 &4587414707633430823
 GameObject:
   m_ObjectHideFlags: 0

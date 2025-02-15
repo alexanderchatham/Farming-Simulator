@@ -13,13 +13,11 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
     public enum FarmerState { Idle, Moving, Planting, Watering, Harvesting, Eating, Sleeping, Resting }
     public FarmerState CurrentState { get; private set; } = FarmerState.Idle;
 
-    public GameObject FarmerUI;
+    public GameObject FarmerUIPrefab;
+    private GameObject farmerUI;
     private FarmerNeeds needs => GetComponent<FarmerNeeds>();
+    private FarmManager manager => FarmManager.Instance;
     public Transform CurrentFarmPlot { get; set; } // Tracks the current farm plot
-    public Transform SeedStorage;
-    public Transform WaterSource;
-    public Transform FoodSource;
-    public GameObject[] Plants;
 
     private Dictionary<string, bool> worldState => FarmManager.Instance.worldState;
     private NavMeshAgent agent; 
@@ -36,9 +34,9 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
     public int seeds;
     public int water;
     public int food;
-    public int maxFood = 5;
-    public int maxSeeds = 5;
-    public int maxWater = 5;
+    public int maxFood => manager.maxFood;
+    public int maxSeeds => manager.maxSeeds;
+    public int maxWater => manager.maxWater;
 
     public async Task Eat() { CurrentState = FarmerState.Eating; await Task.Delay(3000); }
     public async Task Sleep() { needs.fatigue = 100f; CurrentState = FarmerState.Sleeping; await Task.Delay(8000); }
@@ -81,12 +79,13 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
     public void Initialize()
     {
         agent = GetComponent<NavMeshAgent>();
-        var farmerUI = Instantiate(FarmerUI, Vector3.zero, Quaternion.identity,GameObject.FindGameObjectWithTag("MainCanvas").transform).GetComponent<FarmerUI>();
-        farmerUI.SetFarmer(transform);
+        farmerUI = Instantiate(FarmerUIPrefab, Vector3.zero, Quaternion.identity, GameObject.FindGameObjectWithTag("MainCanvas").transform);
+        farmerUI.GetComponent<FarmerUI>().SetFarmer(transform);
 
         // Find all interactable objects
+        interactables.Clear();
         interactables.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<IInteractable>());
-
+        ShowUI(false);
         ThinkAndAct();
     }
     private async Task ThinkAndAct()
@@ -107,8 +106,15 @@ public class FarmerGOAP : MonoBehaviour, IGOAPNeeds, IGOAPNavigation, IGOAPResou
             }
 
             await Task.Delay(1000); // Wait before re-evaluating
+
+            // Find all interactable objects
+            interactables.Clear();
+            interactables.AddRange(FindObjectsOfType<MonoBehaviour>().OfType<IInteractable>());
         }
     }
-
+    public void ShowUI(bool b)
+    {
+        farmerUI.SetActive(b);
+    }
     public void SetWorldState(string key, bool value) { worldState[key] = value; }
 }

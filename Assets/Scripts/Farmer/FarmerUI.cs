@@ -11,9 +11,15 @@ public class FarmerUI : MonoBehaviour
     public Image seedSlider;
     public Image hungerSlider;
     public Image fatigueSlider;
+    public CanvasGroup cg;
     public void SetFarmer(Transform farmer)
     {
         this.farmer = farmer;
+    }
+
+    private void OnDisable()
+    {
+        cg.alpha = 0;
     }
 
     public void UpdateUI(float water,float seed,float hunger,float fatigue)
@@ -36,6 +42,7 @@ public class FarmerUI : MonoBehaviour
     {
         if(farmer == null) return;
         transform.position = Camera.main.WorldToScreenPoint(farmer.position ) + Vector3.up * offset;
+        cg.alpha = 1;
         UpdateUI();
     }
 }

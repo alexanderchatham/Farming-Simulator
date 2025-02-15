@@ -925,6 +925,7 @@ GameObject:
   - component: {fileID: 621397891474559651}
   - component: {fileID: 7372374383636028458}
   - component: {fileID: 1685769626243646631}
+  - component: {fileID: 6140900165459166980}
   m_Layer: 5
   m_Name: FarmerCanvas
   m_TagString: Untagged
@@ -999,6 +1000,19 @@ MonoBehaviour:
   seedSlider: {fileID: 6480131317176094823}
   hungerSlider: {fileID: 8945764742056696270}
   fatigueSlider: {fileID: 351953891143484684}
+  cg: {fileID: 6140900165459166980}
+--- !u!225 &6140900165459166980
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6498707162957150330}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6961579030140133135
 GameObject:
   m_ObjectHideFlags: 0
