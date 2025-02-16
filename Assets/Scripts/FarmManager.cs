@@ -193,4 +193,14 @@ public class FarmManager : MonoBehaviour
         PlacePlotIncreaseUI();
         UpdateUI();
     }
+
+    public bool BuyBed()
+    {
+        if (totalGold >= 50)
+        {
+            totalGold -= 50;
+            return true;
+        }
+        return false;
+    }
 }
