@@ -132,7 +132,7 @@ public class FarmManager : MonoBehaviour
 
     public bool UpgradeFood()
     {
-        if (totalGold >= upgradeCostFood && maxFood < 5)
+        if (totalGold >= upgradeCostFood && maxFood < 15)
         {
             totalGold -= upgradeCostFood;
             maxFood++;
@@ -148,8 +148,8 @@ public class FarmManager : MonoBehaviour
         foodText.text = "Food: " + totalFood;
         goldText.text = "Gold: " + totalGold;
         farmerCostText.text = "Hire Farmer: " + farmerCost;
-        plotIncreaseXCostText.text = "Expand: " + plotCost * PlotLength;
-        plotIncreaseYCostText.text = "Expand: " + plotCost * PlotWidth;
+        plotIncreaseXCostText.text = "Expand: " + plotCost * PlotWidth;
+        plotIncreaseYCostText.text = "Expand: " + plotCost * PlotLength;
     }
 
     private void PlacePlotIncreaseUI()
@@ -161,7 +161,7 @@ public class FarmManager : MonoBehaviour
 
     public void IncreasePlotLength(int y)
     {
-        var cost = plotCost * PlotWidth;
+        var cost = plotCost * PlotLength;
         if (cost > totalGold)
             return;
         totalGold -= cost;
@@ -178,7 +178,7 @@ public class FarmManager : MonoBehaviour
     }
     public void IncreasePlotWidth(int x)
     {
-        var cost = plotCost * PlotLength;
+        var cost = plotCost * PlotWidth;
         if (cost > totalGold)
             return;
         totalGold -= cost;

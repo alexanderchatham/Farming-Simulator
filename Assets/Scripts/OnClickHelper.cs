@@ -8,11 +8,17 @@ public class OnClickHelper : MonoBehaviour
     public UnityEvent OnClickEvent;
     public UnityEvent mouseEnterEvent;
     public UnityEvent mouseExitEvent;
+    public bool UpCancelable;
+    private bool cancel;
     public enum triggerType
     {
         OnDown,
         OnUp,
-        Held
+        Held,
+        DownAndUp,
+        DownAndHeld,
+        UpAndHeld,
+        DoubleClick
     }
     public triggerType type;
     public float holdTime;
@@ -24,14 +30,32 @@ public class OnClickHelper : MonoBehaviour
             triggerEvents();
         if (type == triggerType.Held)
             startTimer();
+        if (type == triggerType.DoubleClick)
+            doubleClick();
+        
+    }
+    float doubleClickTimeLimit = 0.25f;
+    float lastClickTime = 0;
+    private void doubleClick()
+    {
+        if(lastClickTime + doubleClickTimeLimit > Time.time)
+        {
+            triggerEvents();
+            lastClickTime = 0;
+        }
+        else
+        {
+            lastClickTime = Time.time;
+        }
     }
 
     private void OnMouseUp()
     {
-        if (type == triggerType.OnUp)
+        if (type == triggerType.OnUp&&!cancel)
             triggerEvents();
         if (type == triggerType.Held)
             endTimer();
+        cancel = false;
     }
 
     private void OnMouseExit()
@@ -39,6 +63,8 @@ public class OnClickHelper : MonoBehaviour
         if (type == triggerType.Held && timerRunning)
             endTimer();
         mouseExitEvent.Invoke();
+        if(UpCancelable)
+            cancel = true;
     }
     private void OnMouseEnter()
     {
@@ -68,7 +94,7 @@ public class OnClickHelper : MonoBehaviour
     }
 
 
-    private void triggerEvents()
+    public void triggerEvents()
     {
         OnClickEvent.Invoke();
         print($"{type} Triggered");
